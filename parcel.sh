@@ -62,6 +62,9 @@ fi
 git checkout $branch
 git pull
 
+# Build binary archive of the project
+mvn clean package -Pbinary -DskipTests
+
 # Get to original location
 cd $pwd
 
@@ -72,9 +75,6 @@ echo "Detected product version: $product_version"
 # We want to enhance product version with timestamp as we're likely to generate many parcels for the same version in working environment
 version="`date +%s`-$product_version"
 echo "Final version: $version"
-
-# Build binary archive of the project
-mvn clean package -Pbinary -DskipTests
 
 # Parcel directory
 parcel_dir=$workdir/SQOOP2_BETA-$version
@@ -95,7 +95,7 @@ for distro in el5 el6 el7 precise sles11 trusty wheezy; do
   mkdir -p $parcel_dir/meta
 
   # Meta file
-  cp parcel/parcel.json $parcel_dir/meta
+  cp parcel/* $parcel_dir/meta
   sed -i -e "s/##VERSION##/$version/g" $parcel_dir/meta/parcel.json
 
   # Creating target parcel archive

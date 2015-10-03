@@ -16,7 +16,8 @@
     }
   },
 
-  "groups": [
-    "sqoop"
-  ]
+  "groups": [ "sqoop" ],
+  "packages": [],
+  "components": [],
+  "scripts": { "defines" : "sqoop2_env.sh" }
 }
