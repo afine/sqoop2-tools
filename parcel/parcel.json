@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "name": "SQOOP2_BETA",
+  "version": "##VERSION##",
+  "setActiveSymlink": true,
+
+  "depends": "CDH",
+  "conflicts": "",
+
+  "users": {
+    "sqoop2": {
+      "longname"    : "SQOOP 2 User",
+      "home"        : "/var/lib/sqoop2",
+      "shell"       : "/sbin/nologin",
+      "extra_groups": [ "sqoop" ]
+    }
+  },
+
+  "groups": [
+    "sqoop"
+  ]
+}
