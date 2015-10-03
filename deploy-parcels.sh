@@ -92,10 +92,13 @@ function cm_wait_for_parcel () {
   while [ 1 ]
   do
     # Retrieve current stage
-    stage=$(cm_get $1 | grep "stage")
+    output=$(cm_get $1)
+
+    # Our current stage
+    stage=`echo $output| grep stage | sed -re "s/^.* \"stage\" : \"([A-Z]+)\".*\$/\1/"`
 
     # Breaking condition
-    echo $stage | grep $2 && break
+    echo $stage | grep $2 > /dev/null && break
 
     # To keep us informed
     echo "Waiting on $1 to be $2, current stage is $stage"
@@ -141,6 +144,9 @@ remote_copy "$copy_prep/*" $target_dir
 cluster=$(cm_get "clusters" | grep "name" | sed -re "s/.*\"name\" : \"(.*)\".*/\1/")
 url_cluster=$(echo "$cluster" | sed -re "s/ /%20/g")
 echo "Detected '$cluster', for URL will use '$url_cluster'"
+
+# We have to wait on downloaded state here is the parcel can be in state "UNAVAILABLE" at the begging (missing sha1 file)
+cm_wait_for_parcel clusters/$url_cluster/parcels/products/$product/versions/$version DOWNLOADED
 
 # Distributing parcel
 cm_post clusters/$url_cluster/parcels/products/$product/versions/$version/commands/startDistribution
