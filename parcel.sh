@@ -62,15 +62,19 @@ fi
 git checkout $branch
 git pull
 
-# Build binary archive of the project
-mvn clean package -Pbinary -DskipTests
-
 # Get to original location
 cd $pwd
 
 # Detect version
-version=`grep "<version>" $repository_dir/pom.xml | head -n 2 | tail -n 1 | sed -re "s/^.*>(.*)<.*$/\1/"`
-echo "Detected version: $version"
+product_version=`grep "<version>" $repository_dir/pom.xml | head -n 2 | tail -n 1 | sed -re "s/^.*>(.*)<.*$/\1/"`
+echo "Detected product version: $product_version"
+
+# We want to enhance product version with timestamp as we're likely to generate many parcels for the same version in working environment
+version="`date +%s`-$product_version"
+echo "Final version: $version"
+
+# Build binary archive of the project
+mvn clean package -Pbinary -DskipTests
 
 # Parcel directory
 parcel_dir=$workdir/SQOOP2_BETA-$version
