@@ -73,7 +73,7 @@ product_version=`grep "<version>" $repository_dir/pom.xml | head -n 2 | tail -n 
 echo "Detected product version: $product_version"
 
 # We want to enhance product version with timestamp as we're likely to generate many parcels for the same version in working environment
-version="`date +%s`-$product_version"
+version="`date +%Y%m%d%H%M`-$product_version"
 echo "Final version: $version"
 
 # Parcel directory
