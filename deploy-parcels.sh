@@ -84,15 +84,21 @@ function cm_get() {
   cm_api "GET" "$1"
 }
 function cm_post() {
-  cm_api "POST" "$1"
+  cm_api "POST" "$1" > /dev/null
 }
 
 # Wait until parcel will get to given state
 function cm_wait_for_parcel () {
   while [ 1 ]
   do
-    cm_get $1 | grep '"stage" : "'$2'"' && break
-    echo "Waiting on $1 to be $2"
+    # Retrieve current stage
+    stage=$(cm_get $1 | grep "stage")
+
+    # Breaking condition
+    echo $stage | grep $2 && break
+
+    # To keep us informed
+    echo "Waiting on $1 to be $2, current stage is $stage"
     sleep 5
   done
 }
@@ -102,13 +108,24 @@ copy_prep=$workdir/local_parcel_deploy
 echo "Working in local parcel copy directory: $copy_prep"
 rm -rf $copy_prep
 mkdir -p $copy_prep
-cp $parcel_repo/*.parcel $copy_prep/
+
+# By default we will copy parcels for all platforms to the target server. However
+# if we're able to get platform of the remote box, then we'll simply copy only the
+# relevant one.
+remote_parcel=$(remote_exec "ls $target_dir | head -n 1")
+remote_platform=`echo $remote_parcel | sed -re "s/^.*-([a-z0-9]+).parcel/\1/"`
+echo "Remote parcel $remote_parcel with remote platform $remote_platform"
+if [[ -n $remote_platform ]]; then
+  cp $parcel_repo/*-$remote_platform.parcel $copy_prep
+else
+  cp $parcel_repo/*.parcel $copy_prep/
+fi
 
 # Generating checkusm
 for filepath in $copy_prep/*.parcel; do
   file=$(basename $filepath)
   echo "Generating checksum for $file on path $filepath"
-#  sha1sum $filepath | cut -f1 -d' ' > $filepath.sha
+  sha1sum $filepath | cut -f1 -d' ' > $filepath.sha
 done
 
 # Getting product and version name as that will be required for CM APIs
@@ -118,7 +135,7 @@ echo "Detected product '$product' on version '$version'"
 
 # Execute
 echo "Uploading parcels"
-#remote_copy "$copy_prep/*" $target_dir
+remote_copy "$copy_prep/*" $target_dir
 
 # Detecting cluster
 cluster=$(cm_get "clusters" | grep "name" | sed -re "s/.*\"name\" : \"(.*)\".*/\1/")
@@ -127,7 +144,8 @@ echo "Detected '$cluster', for URL will use '$url_cluster'"
 
 # Distributing parcel
 cm_post clusters/$url_cluster/parcels/products/$product/versions/$version/commands/startDistribution
-cm_wait_for_parcel clusters/$urlcluster/parcels/products/$produce/versions/$version DISTRIBUTED
+cm_wait_for_parcel clusters/$url_cluster/parcels/products/$product/versions/$version DISTRIBUTED
 
-# TODO: Activate parcel
-# TODO: general clean up
+# Activate parcel
+cm_post clusters/$url_cluster/parcels/products/$product/versions/$version/commands/activate
+cm_wait_for_parcel clusters/$url_cluster/parcels/products/$product/versions/$version ACTIVATED
