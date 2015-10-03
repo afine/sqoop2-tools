@@ -52,7 +52,7 @@ echo "Repository directory: $repository_dir"
 # Create directory if it doesn't exist, otherwise just fetch origin
 if [[ -d $repository_dir ]]; then
   cd $repository_dir
-#  git fetch
+  git fetch
 else
   git clone $repository $repository_dir
   cd $repository_dir
