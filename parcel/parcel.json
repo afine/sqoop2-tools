@@ -4,6 +4,8 @@
   "version": "##VERSION##",
   "setActiveSymlink": true,
 
+  "provides": ["sqoop2_beta" ],
+
   "depends": "CDH",
   "conflicts": "",
 
