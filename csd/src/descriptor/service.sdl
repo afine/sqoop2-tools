@@ -1,0 +1,81 @@
+// Licensed to Cloudera, Inc. under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  Cloudera, Inc. licenses this file
+// to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+{
+  "name" : "SQOOP2_BETA",
+  "label" : "Sqoop 2 beta",
+  "description" : "Sqoop is a tool designed for efficiently transferring bulk data between Apache Hadoop and structured datastores such as relational databases. <span class=\"error\">Before adding this service, ensure that the Sqoop 2 beta parcel is installed and activated.</span>",
+  "version" : "0.1.0-SNAPSHOT",
+
+  "compatibility" : {
+    "generation": 1,
+    "cdhVersion" : { "min" : "5", "max" : "5" }
+  },
+
+  "runAs" : {
+    "user" : "sqoop2",
+    "group" : "sqoop2"
+  },
+
+  "icon" : "images/sqoop2.png",
+
+  "parcel" : {
+    "repoUrl" : "http://archive.cloudera.com/sqoop2beta/parcels/latest/",
+    "requiredTags" : [ "cdh", "sqoop2_beta" ]
+  },
+
+  "serviceDependencies" : [
+    { "name": "YARN", "required" : "true"}
+  ],
+
+  "parameters" : [
+    {
+      "name" : "port",
+      "label" : "Sqoop 2 server port",
+      "description" : "Port where Sqoop 2 service will run.",
+      "type" : "port"
+    }
+  ],
+
+  "roles" : [
+  {
+    "name" : "SQOOP2_SERVER",
+    "label" : "Sqoop 2 Server",
+    "pluralLabel" : "Sqoop 2 Servers",
+
+    "startRunner" : {
+      "program" : "scripts/control.sh",
+      "args" : [ "start" ]
+    },
+
+    "logging" : {
+      "dir" : "/var/log/sqoop2/",
+      "filename" : "server.log",
+      "modifiable" : true,
+      "configName" : "sqoop.log4j.dir",
+      "loggingType" : "log4j"
+    },
+
+    "configWriter" : {
+      "generators" : [
+        {
+          "filename" : "sqoop.properties",
+          "configFormat" : "properties"
+        }
+      ]
+    }
+  }
+  ]
+}
