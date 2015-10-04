@@ -42,7 +42,7 @@
 
   "parameters" : [
     {
-      "name" : "port",
+      "name" : "sqoop.port",
       "label" : "Sqoop 2 server port",
       "description" : "Port where Sqoop 2 service will run.",
       "type" : "port"
