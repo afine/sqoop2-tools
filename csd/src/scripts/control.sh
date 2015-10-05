@@ -30,4 +30,11 @@ echo "CONF_DIR: $CONF_DIR"
 echo "Entire environment:"
 env
 
-exec sleep 60s
+# Defining variables expected in Sqoop 2 start scripts
+export HADOOP_COMMON_HOME=$CDH_HADOOP_HOME
+export HADOOP_HDFS_HOME=$CDH_HDFS_HOME
+export HADOOP_YARN_HOME=$CDH_YARN_HOME
+export HADOOP_MAPRED_HOME=$CDH_MR2_HOME
+
+echo "Starting Sqoop 2 from: $SQOOP2_PARCEL_DIRNAME"
+exec $SQOOP2_PARCEL_DIRNAME/bin/sqoop.sh server start
