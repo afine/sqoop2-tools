@@ -27,4 +27,7 @@ echo "Host: `hostname -f`"
 echo "Pwd: `pwd`"
 echo "CONF_DIR: $CONF_DIR"
 
+echo "Entire environment:"
+env
+
 exec sleep 60s
