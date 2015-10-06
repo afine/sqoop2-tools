@@ -49,6 +49,17 @@
     }
   ],
 
+  "commands" : [
+    {
+      "name" : "repository_upgrade",
+      "label" : "Upgrade repository metadata",
+      "description" : "Will initialize or upgrade Sqoop 2 repository metadata (structures and data).",
+      "roleName" : "SQOOP2_SERVER",
+      "roleCommand" : "repository_upgrade",
+      "runMode" : "single"
+    }
+  ],
+
   "roles" : [
   {
     "name" : "SQOOP2_SERVER",
@@ -57,11 +68,11 @@
 
     "startRunner" : {
       "program" : "scripts/control.sh",
-      "args" : [ "start" ]
+      "args" : [ "server" ]
     },
 
     "logging" : {
-      "dir" : "/var/log/sqoop2/",
+      "dir" : "/var/log/sqoop2",
       "filename" : "server.log",
       "modifiable" : true,
       "configName" : "sqoop.log4j.dir",
@@ -75,7 +86,21 @@
           "configFormat" : "properties"
         }
       ]
-    }
+    },
+
+    "commands" : [
+      {
+        "name" : "repository_upgrade",
+        "label" : "Upgrade repository metadata",
+        "description" : "Will initialize or upgrade Sqoop 2 repository metadata (structures and data).",
+        "expectedExitCodes" : [0],
+        "requiredRoleState" : "stopped",
+        "commandRunner" : {
+          "program" : "scripts/control.sh",
+          "args" : ["upgrade"]
+        }
+      }
+    ]
   }
   ]
 }
