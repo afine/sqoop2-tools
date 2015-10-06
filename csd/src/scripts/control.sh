@@ -37,4 +37,4 @@ export HADOOP_YARN_HOME=$CDH_YARN_HOME
 export HADOOP_MAPRED_HOME=$CDH_MR2_HOME
 
 echo "Starting Sqoop 2 from: $SQOOP2_PARCEL_DIRNAME"
-exec $SQOOP2_PARCEL_DIRNAME/bin/sqoop.sh server start
+exec $SQOOP2_PARCEL_DIRNAME/bin/sqoop.sh server run
