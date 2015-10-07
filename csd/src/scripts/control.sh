@@ -25,7 +25,8 @@ echo ""
 echo "Date: `date`"
 echo "Host: `hostname -f`"
 echo "Pwd: `pwd`"
-echo "Extra classpath: $SQOOP_SERVER_EXTRA_LIB"
+echo "SQOOP_SERVER_EXTRA_LIB: $SQOOP_SERVER_EXTRA_LIB"
+echo "CM_SQOOP_DATABASE_HOSTNAME: $CM_SQOOP_DATABASE_HOSTNAME"
 echo "CONF_DIR: $CONF_DIR"
 
 echo "Entire environment:"
@@ -49,19 +50,41 @@ echo "sqoop.config.provider=org.apache.sqoop.core.PropertiesConfigurationProvide
 # We need to finish Sqoop 2 configuration file sqoop.properties as CM is not generating final configuration
 export CONF_FILE=$SQOOP_CONF_DIR/sqoop.properties
 
-# JDBC repository provider configuration
-# TODO: This should be actually configurable in the UI
-echo "org.apache.sqoop.repository.jdbc.handler=org.apache.sqoop.repository.derby.DerbyRepositoryHandler" >> $CONF_FILE
+# JDBC Repository provider post-configuration
+case $CM_SQOOP_DATABASE_TYPE in
+  MySQL)
+    export DB_HANDLER="org.apache.sqoop.repository.mysql.MySqlRepositoryHandler"
+    export DB_JDBC_PREFIX="jdbc:mysql://"
+    export DB_DRIVER="com.mysql.jdbc.Driver"
+  break
+  ;;
+  PostgreSQL)
+    export DB_HANDLER="org.apache.sqoop.repository.postgresql.PostgresqlRepositoryHandler"
+    export DB_JDBC_PREFIX="jdbc:postgresql://"
+    export DB_DRIVER="org.postgresql.Driver"
+  break
+  ;;
+  Derby)
+    export DB_HANDLER="org.apache.sqoop.repository.derby.DerbyRepositoryHandler"
+    export DB_JDBC_PREFIX="jdbc:derby:"
+    export DB_DRIVER="org.apache.derby.jdbc.EmbeddedDriver"
+  break
+  ;;
+  *)
+    echo "Unknown Database type: '$CM_SQOOP_DATABASE_TYPE'"
+    exit
+  ;;
+esac
+echo "org.apache.sqoop.repository.jdbc.handler=$DB_HANDLER" >> $CONF_FILE
 echo "org.apache.sqoop.repository.jdbc.transaction.isolation=READ_COMMITTED" >> $CONF_FILE
 echo "org.apache.sqoop.repository.jdbc.maximum.connections=10" >> $CONF_FILE
-echo "org.apache.sqoop.repository.jdbc.url=jdbc:derby:/var/lib/sqoop2/repository/db;create=true" >> $CONF_FILE
-echo "org.apache.sqoop.repository.jdbc.driver=org.apache.derby.jdbc.EmbeddedDriver" >> $CONF_FILE
-echo "org.apache.sqoop.repository.jdbc.user=sa" >> $CONF_FILE
-echo "org.apache.sqoop.repository.jdbc.password=" >> $CONF_FILE
+echo "org.apache.sqoop.repository.jdbc.url=${DB_JDBC_PREFIX}${CM_SQOOP_DATABASE_HOSTNAME}" >> $CONF_FILE
+echo "org.apache.sqoop.repository.jdbc.driver=${DB_DRIVER}" >> $CONF_FILE
 
-# The configuration directory is dynamic, so we have to generate it here
+# Hadoop configuration directory depends on where we're running from:
 echo "org.apache.sqoop.submission.engine.mapreduce.configuration.directory=$CONF_DIR/yarn-conf/" >> $CONF_FILE
 
+# Execute required action(s)
 case $COMMAND in
   upgrade)
     echo "Starting Sqoop 2 upgrade tool"

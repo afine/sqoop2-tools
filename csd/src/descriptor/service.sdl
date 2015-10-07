@@ -50,6 +50,39 @@
 
   "parameters" : [
     {
+      "name" : "cm.sqoop.database.type",
+      "label" : "Database",
+      "description" : "Database that Sqoop should use for repository",
+      "type" : "string_enum",
+      "default": "Derby",
+      "validValues": [ "Derby", "MySQL", "PostgreSQL" ],
+      "configurableInWizard" : true
+    },
+    {
+      "name" : "cm.sqoop.database.hostname",
+      "label" : "Database Hostname",
+      "description" : "Hostname with database that Sqoop will use for it's repository.",
+      "type" : "string",
+      "default": "/var/lib/sqoop2/repository/db;create=true",
+      "configurableInWizard" : true
+    },
+    {
+      "name" : "org.apache.sqoop.repository.jdbc.user",
+      "label" : "Database Username",
+      "description" : "Username with database that Sqoop will use for it's repository.",
+      "type" : "string",
+      "default": "sa",
+      "configurableInWizard" : true
+    },
+    {
+      "name" : "org.apache.sqoop.repository.jdbc.password",
+      "label" : "Database Password",
+      "description" : "Password with database that Sqoop will use for it's repository.",
+      "type" : "password",
+      "default": "",
+      "configurableInWizard" : true
+    },
+    {
       "name" : "org.apache.sqoop.jetty.port",
       "label" : "Sqoop 2 server port",
       "description" : "Port where Sqoop 2 service will run.",
@@ -128,7 +161,9 @@
       "program" : "scripts/control.sh",
       "args" : [ "server" ],
       "environmentVariables" : {
-        "SQOOP_SERVER_EXTRA_LIB" : "${cm.sqoop.classpath.extra}"
+        "SQOOP_SERVER_EXTRA_LIB" : "${cm.sqoop.classpath.extra}",
+        "CM_SQOOP_DATABASE_TYPE" : "${cm.sqoop.database.type}",
+        "CM_SQOOP_DATABASE_HOSTNAME" : "${cm.sqoop.database.hostname}"
       }
     },
 
