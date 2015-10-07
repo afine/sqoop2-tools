@@ -1,31 +1,71 @@
 # Sqoop 2 beta packaging scripts
 
-Various helpful scripts to package and deploy Sqoop 2 "beta" (unofficial) bits to CDH clusters.
+Various helpful scripts to package and deploy arbitrary Sqoop 2 repository to CDH cluster (with associated CM service).
 
 ## General flow
 
-This section WILL describe the general flow one needs to generate and deploy Sqoop2 beta on given cluster.
+The general flow is as follows:
+
+# Generate parcel (=package) for given repository and branch
+# Upload (deploy) the generated parcel to given CM instance
+# Upload (deploy) CSD to given CM instance
+
+```bash
+# Building parcels for upstream bits
+./parcel.sh -r https://github.com/apache/sqoop.git -b sqoop2
+./deploy-parcels.sh -h cool.sever.somewhere.org
+./deploy-csd.sh -h cool.sever.somewhere.org
+```
+
+You still need to CM to deploy the Sqoop 2 service on the cluster as this step hasn't been automated yet.
 
 ## Individual scripts
 
 This section describes individual scripts that are available in the repository
 
-### parcel.sh
+### `parcel.sh`
 
-Script `parcel.sh` is responsible for creating parcels with Sqoop 2 bits that can be installed into Cloudera Manager. The sripts requires two arguments - `-r` with github repository (that will be cloned) and `-b` with branch name inside this repository. The script should work with both upstream (Apache) and downstream (cloudera) repositories and branches.
+Script `parcel.sh` is responsible for creating parcels with Sqoop 2 bits that can be installed into Cloudera Manager and subsequently distributed across the cluster. The sripts requires two arguments - `-r` with github repository (that will be cloned to working directory) and `-b` with branch name inside this repository. The script should work with both upstream (Apache) and downstream (cloudera) repositories and branches (provided all dependent patches are available there).
 
 ```bash
 # Building parcels for upstream bits
 ./parcel.sh -r https://github.com/apache/sqoop.git -b sqoop2
 ```
 
-### deploy-parcels.sh
+All parameters:
 
-Script `deploy-parcels.sh` takes generated parcels (by default from target/parcel_repo where `parcel.sh` will generate output) and uploads them to given CM host. After upload the new parcel is distributed and activated.
+* `-r` Repository URL (anything that `git clone` will accept)
+* `-b` Branch in the repository that we'll use to generate the parcels
 
-TODO: Add parameter list
+### `deploy-parcels.sh`
+
+Script `deploy-parcels.sh` takes generated parcels (by default from `target/parcel_repo` where script `parcel.sh` will generate output) and uploads them to given CM host. After upload the new parcel is distributed and activated.
 
 ```bash
 # Deploy parcels to given CM instance
-./parcel.sh -h cool.sever.somewhere.org
+./deploy-parcels.sh -h cool.sever.somewhere.org
 ```
+
+All parameters:
+
+* `-p` Local parcel repository (default is `target/parcel_repo`)
+* `-t` Target directory on CM server host where the parcel(s) should be uploaded (default is `/opt/cloudera/parcel-repo`)
+* `-u` Username for SSH access to CM server (default is `root`)
+* `-w` Password for SSH access to CM server (default is `cloudera`)
+* `-h` Hostname of CM server
+
+### `deploy-csd.sh`
+
+Script `deploy-csd.sh` will build CSD (Custom service descriptor, code for Cloudera Manager to actually manage the Sqoop 2 service) and deploy it to target CM host. This script will restart CM to force CM to load the CSD jar.
+
+```bash
+# Deploy CSD to given CM instance
+./deploy-csd.sh -h cool.sever.somewhere.org
+```
+
+All parameters:
+
+* `-t` Target directory on CM server host where the CSD should be uploaded (default is `/opt/cloudera/csd`)
+* `-u` Username for SSH access to CM server (default is `root`)
+* `-w` Password for SSH access to CM server (default is `cloudera`)
+* `-h` Hostname of CM server
