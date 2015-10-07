@@ -76,8 +76,6 @@ case $CM_SQOOP_DATABASE_TYPE in
   ;;
 esac
 echo "org.apache.sqoop.repository.jdbc.handler=$DB_HANDLER" >> $CONF_FILE
-echo "org.apache.sqoop.repository.jdbc.transaction.isolation=READ_COMMITTED" >> $CONF_FILE
-echo "org.apache.sqoop.repository.jdbc.maximum.connections=10" >> $CONF_FILE
 echo "org.apache.sqoop.repository.jdbc.url=${DB_JDBC_PREFIX}${CM_SQOOP_DATABASE_HOSTNAME}" >> $CONF_FILE
 echo "org.apache.sqoop.repository.jdbc.driver=${DB_DRIVER}" >> $CONF_FILE
 

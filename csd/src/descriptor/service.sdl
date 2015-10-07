@@ -132,6 +132,20 @@
       "default": "org.apache.sqoop.execution.mapreduce.MapreduceExecutionEngine"
     },
     {
+      "name" : "org.apache.sqoop.repository.jdbc.transaction.isolation",
+      "label" : "Transaction isolation",
+      "description" : "Transaction isolation level that will be used while talking to Sqoop repository. This doesn't affect connections that are transferring data.",
+      "type" : "string",
+      "default": "READ_COMMITTED"
+    },
+    {
+      "name" : "org.apache.sqoop.repository.jdbc.maximum.connections",
+      "label" : "Connection pool size",
+      "description" : "Size of connection pool for communicating with repository database. This doesn't affect connections that are transferring data.",
+      "type" : "long",
+      "default": 10
+    },
+    {
       "name" : "cm.sqoop.classpath.extra",
       "label" : "Extra classpath",
       "description" : "All jars from this directory will be added to Sqoop 2 server classpath.",
@@ -187,7 +201,9 @@
             "org.apache.sqoop.driver.autoupgrade",
             "org.apache.sqoop.repository.provider",
             "org.apache.sqoop.submission.engine",
-            "org.apache.sqoop.execution.engine"
+            "org.apache.sqoop.execution.engine",
+            "org.apache.sqoop.repository.jdbc.transaction.isolation",
+            "org.apache.sqoop.repository.jdbc.maximum.connections"
           ]
         }
       ]
