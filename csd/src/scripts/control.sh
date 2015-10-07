@@ -57,19 +57,16 @@ case $CM_SQOOP_DATABASE_TYPE in
     export DB_HANDLER="org.apache.sqoop.repository.mysql.MySqlRepositoryHandler"
     export DB_JDBC_PREFIX="jdbc:mysql://"
     export DB_DRIVER="com.mysql.jdbc.Driver"
-  break
   ;;
   PostgreSQL)
     export DB_HANDLER="org.apache.sqoop.repository.postgresql.PostgresqlRepositoryHandler"
     export DB_JDBC_PREFIX="jdbc:postgresql://"
     export DB_DRIVER="org.postgresql.Driver"
-  break
   ;;
   Derby)
     export DB_HANDLER="org.apache.sqoop.repository.derby.DerbyRepositoryHandler"
     export DB_JDBC_PREFIX="jdbc:derby:"
     export DB_DRIVER="org.apache.derby.jdbc.EmbeddedDriver"
-  break
   ;;
   *)
     echo "Unknown Database type: '$CM_SQOOP_DATABASE_TYPE'"
@@ -87,11 +84,9 @@ echo "org.apache.sqoop.submission.engine.mapreduce.configuration.directory=$CONF
 case $AUTHENTICATION_TYPE in
   SIMPLE)
     echo "org.apache.sqoop.security.authentication.handler=org.apache.sqoop.security.authentication.SimpleAuthenticationHandler" >> $CONF_FILE
-  break
   ;;
   KERBEROS)
     echo "org.apache.sqoop.security.authentication.handler=org.apache.sqoop.security.authentication.KerberosAuthenticationHandler" >> $CONF_FILE
-  break
   ;;
   *)
     echo "Unknown authention type: '$AUTHENTICATION_TYPE'"
