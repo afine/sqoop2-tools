@@ -40,6 +40,14 @@
     { "name": "YARN", "required" : "true"}
   ],
 
+  "serviceInit" : {
+    "preStartSteps" : [
+      {
+        "commandName" : "repository_upgrade"
+      }
+    ]
+  },
+
   "parameters" : [
     {
       "name" : "org.apache.sqoop.jetty.port",
