@@ -42,10 +42,53 @@
 
   "parameters" : [
     {
-      "name" : "sqoop.port",
+      "name" : "org.apache.sqoop.jetty.port",
       "label" : "Sqoop 2 server port",
       "description" : "Port where Sqoop 2 service will run.",
-      "type" : "port"
+      "type" : "port",
+      "default": 12000
+    },
+    {
+      "name" : "org.apache.sqoop.repository.schema.immutable",
+      "label" : "Repository structure immutable",
+      "description" : "When set to true, then Sqoop won't change the repository structures during boot up. Upgrades to repository structures can be explicitly requested by calling appropriate command on the service.",
+      "type" : "boolean",
+      "default": "true"
+    },
+    {
+      "name" : "org.apache.sqoop.connector.autoupgrade",
+      "label" : "Auto upgrade connector",
+      "description" : "When set to false, then Sqoop won't change automaticaly ugrade the connector structures during boot up. Upgrade can be explicitly requested by calling appropriate command on the service.",
+      "type" : "boolean",
+      "default": "false"
+    },
+    {
+      "name" : "org.apache.sqoop.driver.autoupgrade",
+      "label" : "Auto upgrade drive",
+      "description" : "When set to false, then Sqoop won't change automaticaly ugrade the driver structures during boot up. Upgrade can be explicitly requested by calling appropriate command on the service.",
+      "type" : "boolean",
+      "default": "false"
+    },
+    {
+      "name" : "org.apache.sqoop.repository.provider",
+      "label" : "Repository provider",
+      "description" : "Repository provider to use",
+      "type" : "string",
+      "default": "org.apache.sqoop.repository.JdbcRepositoryProvider"
+    },
+    {
+      "name" : "org.apache.sqoop.submission.engine",
+      "label" : "Submission engine",
+      "description" : "Class that will sqoop use for submission engine.",
+      "type" : "string",
+      "default": "org.apache.sqoop.submission.mapreduce.MapreduceSubmissionEngine"
+    },
+    {
+      "name" : "org.apache.sqoop.execution.engine",
+      "label" : "Execution engine",
+      "description" : "Class that will sqoop use for execution engine.",
+      "type" : "string",
+      "default": "org.apache.sqoop.execution.mapreduce.MapreduceExecutionEngine"
     }
   ],
 
@@ -83,7 +126,16 @@
       "generators" : [
         {
           "filename" : "sqoop.properties",
-          "configFormat" : "properties"
+          "configFormat" : "properties",
+          "includedParams" : [
+            "org.apache.sqoop.jetty.port",
+            "org.apache.sqoop.repository.schema.immutable",
+            "org.apache.sqoop.connector.autoupgrade",
+            "org.apache.sqoop.driver.autoupgrade",
+            "org.apache.sqoop.repository.provider",
+            "org.apache.sqoop.submission.engine",
+            "org.apache.sqoop.execution.engine"
+          ]
         }
       ]
     },

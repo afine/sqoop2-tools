@@ -48,13 +48,6 @@ echo "sqoop.config.provider=org.apache.sqoop.core.PropertiesConfigurationProvide
 # We need to finish Sqoop 2 configuration file sqoop.properties as CM is not generating final configuration
 export CONF_FILE=$SQOOP_CONF_DIR/sqoop.properties
 
-# Most of those can be moved to CM as they are relevant there
-
-# TODO: Need to properly configure logging (including audit?)
-# Repository provider
-echo "org.apache.sqoop.repository.provider=org.apache.sqoop.repository.JdbcRepositoryProvider" >> $CONF_FILE
-echo "org.apache.sqoop.repository.schema.immutable=true" >> $CONF_FILE
-
 # JDBC repository provider configuration
 # TODO: This should be actually configurable in the UI
 echo "org.apache.sqoop.repository.jdbc.handler=org.apache.sqoop.repository.derby.DerbyRepositoryHandler" >> $CONF_FILE
@@ -65,21 +58,8 @@ echo "org.apache.sqoop.repository.jdbc.driver=org.apache.derby.jdbc.EmbeddedDriv
 echo "org.apache.sqoop.repository.jdbc.user=sa" >> $CONF_FILE
 echo "org.apache.sqoop.repository.jdbc.password=" >> $CONF_FILE
 
-# System properties for embedded Derby configuration
-# TODO: DO I need this one?
-#org.apache.sqoop.repository.sysprop.derby.stream.error.file=@LOGDIR@/derbyrepo.log
-
-# Disable auto upgrade
-echo "org.apache.sqoop.connector.autoupgrade=false" >> $CONF_FILE
-echo "org.apache.sqoop.driver.autoupgrade=false" >> $CONF_FILE
-
-# Reloading configuration (useless in CM word)
-echo "org.apache.sqoop.core.configuration.provider.properties.sleep=60000" >> $CONF_FILE
-
-# Engines
-echo "org.apache.sqoop.submission.engine=org.apache.sqoop.submission.mapreduce.MapreduceSubmissionEngine" >> $CONF_FILE
+# The configuration directory is dynamic, so we have to generate it here
 echo "org.apache.sqoop.submission.engine.mapreduce.configuration.directory=$CONF_DIR/yarn-conf/" >> $CONF_FILE
-echo "org.apache.sqoop.execution.engine=org.apache.sqoop.execution.mapreduce.MapreduceExecutionEngine" >> $CONF_FILE
 
 case $COMMAND in
   upgrade)
