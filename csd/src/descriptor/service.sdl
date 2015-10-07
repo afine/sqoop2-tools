@@ -97,6 +97,13 @@
       "description" : "Class that will sqoop use for execution engine.",
       "type" : "string",
       "default": "org.apache.sqoop.execution.mapreduce.MapreduceExecutionEngine"
+    },
+    {
+      "name" : "cm.sqoop.classpath.extra",
+      "label" : "Extra classpath",
+      "description" : "All jars from this directory will be added to Sqoop 2 server classpath.",
+      "type" : "string",
+      "default": "/var/lib/sqoop2/"
     }
   ],
 
@@ -119,7 +126,10 @@
 
     "startRunner" : {
       "program" : "scripts/control.sh",
-      "args" : [ "server" ]
+      "args" : [ "server" ],
+      "environmentVariables" : {
+        "SQOOP_SERVER_EXTRA_LIB" : "${cm.sqoop.classpath.extra}"
+      }
     },
 
     "logging" : {

@@ -25,6 +25,7 @@ echo ""
 echo "Date: `date`"
 echo "Host: `hostname -f`"
 echo "Pwd: `pwd`"
+echo "Extra classpath: $SQOOP_SERVER_EXTRA_LIB"
 echo "CONF_DIR: $CONF_DIR"
 
 echo "Entire environment:"
