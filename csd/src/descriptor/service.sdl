@@ -194,6 +194,11 @@
       }
     },
 
+    "topology" : {
+      "minInstances" : "1",
+      "maxInstances" : "1"
+    },
+
     "kerberosPrincipals" : [
       {
         "name" : "sqoop_principal",
