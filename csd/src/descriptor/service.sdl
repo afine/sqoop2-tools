@@ -48,6 +48,8 @@
     ]
   },
 
+  "kerberos" : "${org.apache.sqoop.security.authentication.type}",
+
   "parameters" : [
     {
       "name" : "cm.sqoop.database.type",
@@ -146,6 +148,16 @@
       "default": 10
     },
     {
+      "name" : "org.apache.sqoop.security.authentication.type",
+      "label" : "Authentication Type",
+      "description" : "Authentication type for Sqoop 2 server. Can either be \"simple\" or \"kerberos\".",
+      "required" : "true",
+      "type" : "string_enum",
+      "validValues": ["SIMPLE", "KERBEROS"],
+      "default" : "SIMPLE",
+      "configurableInWizard" : true
+    },
+    {
       "name" : "cm.sqoop.classpath.extra",
       "label" : "Extra classpath",
       "description" : "All jars from this directory will be added to Sqoop 2 server classpath.",
@@ -177,9 +189,23 @@
       "environmentVariables" : {
         "SQOOP_SERVER_EXTRA_LIB" : "${cm.sqoop.classpath.extra}",
         "CM_SQOOP_DATABASE_TYPE" : "${cm.sqoop.database.type}",
-        "CM_SQOOP_DATABASE_HOSTNAME" : "${cm.sqoop.database.hostname}"
+        "CM_SQOOP_DATABASE_HOSTNAME" : "${cm.sqoop.database.hostname}",
+        "AUTHENTICATION_TYPE" : "${org.apache.sqoop.security.authentication.type}"
       }
     },
+
+    "kerberosPrincipals" : [
+      {
+        "name" : "sqoop_principal",
+        "primary" : "SQOOP",
+        "instance" : "${host}"
+      },
+      {
+        "name" : "http_principal",
+        "primary" : "HTTP",
+        "instance" : "${host}"
+      }
+    ],
 
     "logging" : {
       "dir" : "/var/log/sqoop2",
@@ -203,7 +229,18 @@
             "org.apache.sqoop.submission.engine",
             "org.apache.sqoop.execution.engine",
             "org.apache.sqoop.repository.jdbc.transaction.isolation",
-            "org.apache.sqoop.repository.jdbc.maximum.connections"
+            "org.apache.sqoop.repository.jdbc.maximum.connections",
+            "org.apache.sqoop.security.authentication.type"
+          ],
+          "kerberosPrincipals" : [
+            {
+              "principalName" : "sqoop_principal",
+              "propertyName" : "org.apache.sqoop.security.authentication.kerberos.principal"
+            },
+            {
+              "principalName" : "http_principal",
+              "propertyName" : "org.apache.sqoop.security.authentication.kerberos.http.principal"
+            }
           ]
         }
       ]
@@ -218,7 +255,13 @@
         "requiredRoleState" : "stopped",
         "commandRunner" : {
           "program" : "scripts/control.sh",
-          "args" : ["upgrade"]
+          "args" : ["upgrade"],
+          "environmentVariables" : {
+            "SQOOP_SERVER_EXTRA_LIB" : "${cm.sqoop.classpath.extra}",
+            "CM_SQOOP_DATABASE_TYPE" : "${cm.sqoop.database.type}",
+            "CM_SQOOP_DATABASE_HOSTNAME" : "${cm.sqoop.database.hostname}",
+            "AUTHENTICATION_TYPE" : "${org.apache.sqoop.security.authentication.type}"
+          }
         }
       }
     ]

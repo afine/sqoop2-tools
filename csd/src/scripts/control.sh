@@ -28,6 +28,7 @@ echo "Pwd: `pwd`"
 echo "SQOOP_SERVER_EXTRA_LIB: $SQOOP_SERVER_EXTRA_LIB"
 echo "CM_SQOOP_DATABASE_HOSTNAME: $CM_SQOOP_DATABASE_HOSTNAME"
 echo "CONF_DIR: $CONF_DIR"
+echo "AUTHENTICATION_TYPE: $AUTHENTICATION_TYPE"
 
 echo "Entire environment:"
 env
@@ -72,7 +73,7 @@ case $CM_SQOOP_DATABASE_TYPE in
   ;;
   *)
     echo "Unknown Database type: '$CM_SQOOP_DATABASE_TYPE'"
-    exit
+    exit 1
   ;;
 esac
 echo "org.apache.sqoop.repository.jdbc.handler=$DB_HANDLER" >> $CONF_FILE
@@ -81,6 +82,29 @@ echo "org.apache.sqoop.repository.jdbc.driver=${DB_DRIVER}" >> $CONF_FILE
 
 # Hadoop configuration directory depends on where we're running from:
 echo "org.apache.sqoop.submission.engine.mapreduce.configuration.directory=$CONF_DIR/yarn-conf/" >> $CONF_FILE
+
+# Authentication handler
+case $AUTHENTICATION_TYPE in
+  SIMPLE)
+    echo "org.apache.sqoop.security.authentication.handler=org.apache.sqoop.security.authentication.SimpleAuthenticationHandler" >> $CONF_FILE
+  break
+  ;;
+  KERBEROS)
+    echo "org.apache.sqoop.security.authentication.handler=org.apache.sqoop.security.authentication.KerberosAuthenticationHandler" >> $CONF_FILE
+  break
+  ;;
+  *)
+    echo "Unknown authention type: '$AUTHENTICATION_TYPE'"
+    exit 1
+  ;;
+esac
+
+# If we have kerberos principal, then add corresponding entries to the configuration
+if [[ -f "$CONF_DIR/sqoop2_beta.keytab" ]]; then
+  echo "Detected keytab file, configuring Sqoop to use it"
+  echo "org.apache.sqoop.security.authentication.kerberos.keytab=$CONF_DIR/sqoop2_beta.keytab" >> $CONF_FILE
+  echo "org.apache.sqoop.security.authentication.kerberos.http.keytab=$CONF_DIR/sqoop2_beta.keytab" >> $CONF_FILE
+fi
 
 # Execute required action(s)
 case $COMMAND in
@@ -95,6 +119,6 @@ case $COMMAND in
     ;;
   *)
     echo "Unknown command: $COMMAND"
-    exit
+    exit 1
     ;;
 esac
