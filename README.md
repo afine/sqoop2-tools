@@ -6,9 +6,9 @@ Various helpful scripts to package and deploy arbitrary Sqoop 2 repository to CD
 
 The general flow is as follows:
 
-# Generate parcel (=package) for given repository and branch
-# Upload (deploy) the generated parcel to given CM instance
-# Upload (deploy) CSD to given CM instance
+1. Generate parcel (=package) for given repository and branch
+2. Upload (deploy) the generated parcel to given CM instance
+3. Upload (deploy) CSD to given CM instance
 
 ```bash
 # Building parcels for upstream bits
