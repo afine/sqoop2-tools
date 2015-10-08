@@ -1,10 +1,6 @@
 #!/bin/bash
 # Deploy CSD to CM
 
-# We require sshpass utility here
-# On Mac you can install it with:
-# brew install http://git.io/sshpass.rb
-
 # Working properties
 target_dir='/opt/cloudera/csd/'
 host=''
@@ -107,5 +103,3 @@ remote_copy csd/target/SQOOP2_BETA*.jar $target_dir
 echo "Restartin CM server to load new CSD version"
 remote_exec "/etc/init.d/cloudera-scm-server restart"
 cm_wait_for_load
-
-

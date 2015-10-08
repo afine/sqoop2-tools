@@ -2,6 +2,22 @@
 
 Various helpful scripts to package and deploy arbitrary Sqoop 2 repository to CDH cluster (with associated CM service).
 
+## Sqoop 2 beta packaging scripts
+
+Various helpful scripts to package and deploy arbitrary Sqoop 2 repository to CDH cluster (with associated CM service).
+
+## Dependencies
+
+These are some additional tools that need to be installed to run these scripts
+under OS X 10.11.
+### sha1sum
+`brew install md5sha1sum`
+### sshpass
+`brew install http://git.io/sshpass.rb`
+### sed (the gnu version)
+`brew install gnu-sed --with-default-names`
+
+
 ## General flow
 
 The general flow is as follows:
