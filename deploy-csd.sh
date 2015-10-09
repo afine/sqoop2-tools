@@ -7,10 +7,11 @@ host=''
 username='root'
 password='cloudera'
 workdir='target/'
+cm_login="admin:admin"
 pwd=`pwd`
 
 # Argument parsing
-while getopts "t:u:w:h:" optname ; do
+while getopts "t:u:w:h:c:" optname ; do
   case "$optname" in
     "t")
       target=$OPTARG
@@ -23,6 +24,9 @@ while getopts "t:u:w:h:" optname ; do
       ;;
     "h")
       host=$OPTARG
+      ;;
+    "c")
+      cm_login=$OPTARG
       ;;
     "?")
       echo "Unknown option $OPTARG"
@@ -47,6 +51,7 @@ echo "Target directory: $target_dir"
 echo "Host: $host"
 echo "Username: $username"
 echo "Password: $password"
+echo "CM Login: $cm_login"
 
 # Execute $1 on remote server
 function remote_exec() {
@@ -63,7 +68,7 @@ function remote_copy() {
 # Execute givem CM REST API call
 function cm_api() {
   echo "Calling CM API $1: $2"
-  curl -sS -X $1 -u "admin:admin" -i "http://${host}:7180/api/v8/$2" 2>&1
+  curl -sS -X $1 -u $cm_login -i "http://${host}:7180/api/v8/$2" 2>&1
 }
 function cm_get() {
   cm_api "GET" "$1"

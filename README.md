@@ -69,6 +69,7 @@ All parameters:
 * `-u` Username for SSH access to CM server (default is `root`)
 * `-w` Password for SSH access to CM server (default is `cloudera`)
 * `-h` Hostname of CM server
+* `-c` Curl compatible login information for CM server (default is `admin:admin`)
 
 ### `deploy-csd.sh`
 
@@ -85,3 +86,4 @@ All parameters:
 * `-u` Username for SSH access to CM server (default is `root`)
 * `-w` Password for SSH access to CM server (default is `cloudera`)
 * `-h` Hostname of CM server
+* `-c` Curl compatible login information for CM server (default is `admin:admin`)
