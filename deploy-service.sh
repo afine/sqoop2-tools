@@ -107,20 +107,24 @@ function cm_put() {
 function cm_post() {
   cm_api "POST" "$1" "$2"
 }
+function cm_delete() {
+  cm_api "DELETE" "$1"
+}
 
 # Wait until parcel will get to given state
 function cm_wait_for_service () {
   api=$1
+  state=$2
   while [ 1 ]
   do
     output=$(cm_get $api)
     message=`echo $output | grep serviceState | sed -re "s/^.* \"serviceState\" : \"([A-Z]+)\".*\$/\1/"`
 
     # Breaking condition
-    echo $message | grep "STARTED" > /dev/null && break
+    echo $message | grep "$2" > /dev/null && break
 
     # To keep us informed
-    echo "Waiting on state STARTED, found $message"
+    echo "Waiting on state $2, found $message"
     sleep 5
   done
 }
@@ -129,6 +133,17 @@ function cm_wait_for_service () {
 cluster=$(cm_get "clusters" | grep "name" | sed -re "s/.*\"name\" : \"(.*)\".*/\1/")
 url_cluster=$(echo "$cluster" | sed -re "s/ /%20/g")
 echo "Detected '$cluster', for URL will use '$url_cluster'"
+
+# Drop previous instance of the service if it exists
+if [[ $(cm_get clusters/$url_cluster/services/$service_name | grep "\"name\" : \"$service_name\"" | wc -l) -gt 0 ]]; then
+  echo "Detected previous instance of service $service_name"
+  echo "Stopping the existing service:"
+  cm_post clusters/$url_cluster/services/$service_name/commands/stop
+  cm_wait_for_service clusters/$url_cluster/services/$service_name STOPPED
+
+  echo "Removing the service:"
+  cm_delete clusters/$url_cluster/services/$service_name
+fi
 
 # If YARN dependency haven't been specified we will identify it on our own
 if [[ -z $service_yarn ]]; then
@@ -152,7 +167,4 @@ echo "Starting the new service"
 cm_post clusters/$url_cluster/services/$service_name/commands/firstRun ""
 
 echo "Waiting on the service to start up"
-cm_wait_for_service clusters/$url_cluster/services/$service_name
-
-# Debug, dump entire configuration
-cm_get clusters/$url_cluster/services
+cm_wait_for_service clusters/$url_cluster/services/$service_name STARTED
