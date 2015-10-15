@@ -20,15 +20,15 @@ password='cloudera'
 cm_login="admin:admin"
 service_name="Sqoop-2-beta"
 service_host=''
+service_yarn=''
 pwd=`pwd`
 
 # TODO:
 # 1) Detect if the service already exists and drop it if so
 # 2) Enable to specify databases and do some workaround for thme (like create DB, ...)
-# 3) Detect YARN dependency name
 
 # Argument parsing
-while getopts "u:w:h:c:n:s:" optname ; do
+while getopts "u:w:h:c:n:s:y:" optname ; do
   case "$optname" in
     "u")
       username=$OPTARG
@@ -47,6 +47,9 @@ while getopts "u:w:h:c:n:s:" optname ; do
       ;;
     "s")
       service_host=$OPTARG
+      ;;
+    "y")
+      service_yarn=$OPTARG
       ;;
     "?")
       echo "Unknown option $OPTARG"
@@ -127,6 +130,14 @@ cluster=$(cm_get "clusters" | grep "name" | sed -re "s/.*\"name\" : \"(.*)\".*/\
 url_cluster=$(echo "$cluster" | sed -re "s/ /%20/g")
 echo "Detected '$cluster', for URL will use '$url_cluster'"
 
+# If YARN dependency haven't been specified we will identify it on our own
+if [[ -z $service_yarn ]]; then
+  service_yarn=$(cm_get clusters/$url_cluster/services | grep '"type" : "YARN"' -B 2 | grep "name" | sed -re "s/^.* \"name\" : \"([-A-Z0-9]+)\".*\$/\1/")
+  echo "Identified running YARN instance: $service_yarn"
+else
+  echo "Using specified YARN dependency: $service_yarn"
+fi
+
 # Create service
 echo "Creating service $service_name"
 cm_post clusters/$url_cluster/services "{ \"items\" : [{\"name\" : \"$service_name\", \"type\" : \"SQOOP2_BETA\"}] }"
@@ -135,7 +146,7 @@ echo "Creating role for Sqoop 2 server"
 cm_post clusters/$url_cluster/services/$service_name/roles "{ \"items\" : [{\"type\" : \"SQOOP2_SERVER\", \"hostRef\" : {\"hostId\" : \"$service_host\"}} ] }"
 
 echo "Configuring the new role"
-cm_put clusters/$url_cluster/services/$service_name/config "{ \"items\" : [{ \"name\" : \"yarn_service\", \"value\" : \"YARN-1\" }] }"
+cm_put clusters/$url_cluster/services/$service_name/config "{ \"items\" : [{ \"name\" : \"yarn_service\", \"value\" : \"$service_yarn\" }] }"
 
 echo "Starting the new service"
 cm_post clusters/$url_cluster/services/$service_name/commands/firstRun ""
@@ -144,4 +155,4 @@ echo "Waiting on the service to start up"
 cm_wait_for_service clusters/$url_cluster/services/$service_name
 
 # Debug, dump entire configuration
-# cm_get clusters/$url_cluster/services/$service_name/config?view=full
+cm_get clusters/$url_cluster/services
