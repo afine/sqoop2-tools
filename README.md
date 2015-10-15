@@ -25,12 +25,14 @@ The general flow is as follows:
 1. Generate parcel (=package) for given repository and branch
 2. Upload (deploy) the generated parcel to given CM instance
 3. Upload (deploy) CSD to given CM instance
+4. Create Sqoop 2 service in given CM instance
 
 ```bash
 # Building parcels for upstream bits
 ./parcel.sh -r https://github.com/apache/sqoop.git -b sqoop2
 ./deploy-parcels.sh -h cool.sever.somewhere.org
 ./deploy-csd.sh -h cool.sever.somewhere.org
+./deploy-service.sh -h cool.sever.somewhere.org
 ```
 
 You still need to CM to deploy the Sqoop 2 service on the cluster as this step hasn't been automated yet.
@@ -87,3 +89,22 @@ All parameters:
 * `-w` Password for SSH access to CM server (default is `cloudera`)
 * `-h` Hostname of CM server
 * `-c` Curl compatible login information for CM server (default is `admin:admin`)
+
+### `deploy-service.sh`
+
+Script `deploy-csd.sh` deploy Sqoop 2 service in given CM server. If service of given name already exists, we'll drop it and re-create it again.
+
+```bash
+# Create service
+./deploy-service.sh -h cool.sever.somewhere.org
+```
+
+All parameters:
+
+* `-u` Username for SSH access to CM server (default is `root`)
+* `-w` Password for SSH access to CM server (default is `cloudera`)
+* `-h` Hostname of CM server
+* `-c` Curl compatible login information for CM server (default is `admin:admin`)
+* `-n` Name for the deployed service (default is `Sqoop-2-beta`)
+* `-s` Hostname where the Sqoop 2 Server should be deployed (default is the same value as has been used for `-h`)
+* `-y` Name of YARN service that should be used as dependency for newly deployed service (default is 1st YARN service available on the cluster)

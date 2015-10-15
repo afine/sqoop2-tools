@@ -24,8 +24,7 @@ service_yarn=''
 pwd=`pwd`
 
 # TODO:
-# 1) Detect if the service already exists and drop it if so
-# 2) Enable to specify databases and do some workaround for thme (like create DB, ...)
+# 1) Enable to specify databases and do some workaround for thme (like create DB, ...)
 
 # Argument parsing
 while getopts "u:w:h:c:n:s:y:" optname ; do
