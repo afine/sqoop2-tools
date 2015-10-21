@@ -110,7 +110,7 @@ for distro in el5 el6 el7 precise sles11 trusty wheezy; do
   mkdir -p $parcel_dir/meta
 
   # Meta file
-  cp parcel/* $parcel_dir/meta
+  cp parcel/meta/* $parcel_dir/meta
   sed -i -e "s/##VERSION##/$version/g" $parcel_dir/meta/parcel.json
 
   # Creating target parcel archive
