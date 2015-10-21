@@ -1,0 +1,8 @@
+{
+  "sqoop2": {
+    "destination": "/usr/bin/sqoop2",
+    "source": "bin/sqoop2",
+    "priority": 20,
+    "isDirectory": false
+  }
+}
