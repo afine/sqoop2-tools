@@ -99,6 +99,9 @@ mv $repository_dir/dist/target/sqoop*/* $parcel_dir/
 rm -rf $parcel_dir/meta
 mkdir -p $parcel_dir/meta
 
+# Copy over new binaries:
+cp parcel/bin/* $parcel_dir/bin
+
 # We need to create all various distributions
 for distro in el5 el6 el7 precise sles11 trusty wheezy; do
   echo "Creating parcel for $distro"

@@ -1,0 +1,19 @@
+#!/bin/bash
+# Reference: http://stackoverflow.com/questions/59895/can-a-bash-script-tell-what-directory-its-stored-in
+SOURCE="${BASH_SOURCE[0]}"
+BIN_DIR="$( dirname "$SOURCE" )"
+while [ -h "$SOURCE" ]
+do
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+  BIN_DIR="$( cd -P "$( dirname "$SOURCE"  )" && pwd )"
+done
+BIN_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
+# Autodetect JAVA_HOME if not defined
+if [ -e $BIN_DIR/../../CDH/lib/bigtop-utils/bigtop-detect-javahome ] ; then
+  . $BIN_DIR/../../CDH/lib/bigtop-utils/bigtop-detect-javahome
+fi
+
+# And run shell tool
+$BIN_DIR/sqoop.sh client $@
