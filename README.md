@@ -108,3 +108,19 @@ All parameters:
 * `-n` Name for the deployed service (default is `Sqoop-2-beta`)
 * `-s` Hostname where the Sqoop 2 Server should be deployed (default is the same value as has been used for `-h`)
 * `-y` Name of YARN service that should be used as dependency for newly deployed service (default is 1st YARN service available on the cluster)
+
+### `get-config.sh`
+
+Script `get-config.sh` download client configs for given service. By default it will look for first YARN service and download it's configuration files.
+
+```bash
+# Get client configs
+./get-configs.sh -h cool.sever.somewhere.org
+```
+
+All parameters:
+
+* `-u` Username for SSH access to CM server (default is `root`)
+* `-w` Password for SSH access to CM server (default is `cloudera`)
+* `-h` Hostname of CM server
+* `-y` Name of service for which we need client configs (default is 1st YARN service available on the cluster)
