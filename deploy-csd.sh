@@ -79,6 +79,7 @@ function remote_copy() {
 
 # Execute givem CM REST API call
 function cm_api() {
+  echo "curl -sS -X $1 -u $cm_login -i "http://${host}:7180/api/v8/$2" 2>&1" >&2
   curl -sS -X $1 -u $cm_login -i "http://${host}:7180/api/v8/$2" 2>&1
 }
 function cm_get() {
@@ -93,7 +94,7 @@ function cm_wait_for_load () {
   while [ 1 ]
   do
     # Call echo service (should return back what we send there)
-    output=$(cm_get "/tools/echo?message=Started")
+    output=$(cm_get "tools/echo?message=Started")
 
     # Ignore any "connection refused" commit from curl though
     message=`echo $output | grep -v  "Connection refused" | grep message | sed -re "s/^.* \"message\" : \"([A-Z]+)\".*\$/\1/"`
