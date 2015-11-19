@@ -82,7 +82,7 @@ fi
 
 # Execute $1 on remote server
 function remote_exec() {
-  echo "Executing command: $1"
+  echo "Executing command: $1" >&2
   sshpass -p $password ssh ${username}@${host} $1
 }
 
@@ -134,7 +134,7 @@ mkdir -p $copy_prep
 # relevant one.
 remote_parcel=$(remote_exec "ls $target_dir | head -n 1")
 remote_platform=`echo $remote_parcel | sed -re "s/^.*-([a-z0-9]+).parcel/\1/"`
-echo "Remote parcel $remote_parcel with remote platform $remote_platform"
+echo "Remote parcel '$remote_parcel' with remote platform '$remote_platform'"
 if [[ -n $remote_platform ]]; then
   cp $parcel_repo/*-$remote_platform.parcel $copy_prep
 else
