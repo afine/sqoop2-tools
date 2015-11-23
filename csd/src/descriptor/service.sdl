@@ -198,7 +198,7 @@
     "kerberosPrincipals" : [
       {
         "name" : "sqoop_principal",
-        "primary" : "SQOOP",
+        "primary" : "sqoop2",
         "instance" : "${host}"
       },
       {
