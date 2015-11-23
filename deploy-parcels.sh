@@ -149,8 +149,8 @@ for filepath in $copy_prep/*.parcel; do
 done
 
 # Getting product and version name as that will be required for CM APIs
-product=`ls $parcel_repo/*-el6.parcel | sed -re "s/^.*\/(.*)-el6.parcel/\1/" | cut -f1 -d-`
-version=`ls $parcel_repo/*-el6.parcel | sed -re "s/^.*\/(.*)-el6.parcel/\1/" | cut -f2,3,4 -d-`
+product=`ls $parcel_repo/*-el6.parcel | head -n 1 | sed -re "s/^.*\/(.*)-el6.parcel/\1/" | cut -f1 -d-`
+version=`ls $parcel_repo/*-el6.parcel | head -n 1 | sed -re "s/^.*\/(.*)-el6.parcel/\1/" | cut -f2,3,4 -d-`
 echo "Detected product '$product' on version '$version'"
 
 # Execute
