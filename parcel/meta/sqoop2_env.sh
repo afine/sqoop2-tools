@@ -13,3 +13,4 @@
 
 echo "Sqoop 2 env script"
 export SQOOP2_PARCEL_DIRNAME=$PARCELS_ROOT/$PARCEL_DIRNAME
+export SQOOP2_DEFAULT_CONNECTOR_BLACKLIST="ftp-connector:generic-jdbc-connector:kafka-connector:kite-connector:mysql-jdbc-connector:oracle-jdbc-connector:sftp-connector"
