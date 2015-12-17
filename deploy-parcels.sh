@@ -82,12 +82,12 @@ fi
 
 # Execute $1 on remote server
 function remote_exec() {
-  sshpass -p $password ssh -v -o 'StrictHostKeyChecking no' ${username}@${host} $1
+  sshpass -p $password ssh -v -oUserKnownHostsFile=/dev/null  -o 'StrictHostKeyChecking no' ${username}@${host} $1
 }
 
 # Copy $1 to $2 on remote server (e.g. upload)
 function remote_copy() {
-  sshpass -p $password scp -v -o 'StrictHostKeyChecking no' $1 ${username}@${host}:$2
+  sshpass -p $password scp -v -oUserKnownHostsFile=/dev/null  -o 'StrictHostKeyChecking no' $1 ${username}@${host}:$2
 }
 
 # Execute givem CM REST API call
