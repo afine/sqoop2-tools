@@ -83,7 +83,7 @@ echo "Service host: $service_host"
 # Execute $1 on remote server
 function remote_exec() {
   echo "Executing command: $1"
-  sshpass -p $password ssh ${username}@${host} $1
+  sshpass -p $password ssh -o 'StrictHostKeyChecking no' ${username}@${host} $1
 }
 
 # Copy $1 to $2 on remote server (e.g. upload)
