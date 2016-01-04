@@ -82,6 +82,7 @@ fi
 
 # Execute $1 on remote server
 function remote_exec() {
+  echo "Executing command: $1" >&2
   sshpass -p $password ssh -v -oUserKnownHostsFile=/dev/null  -o 'StrictHostKeyChecking no' ${username}@${host} $1
 }
 
@@ -132,7 +133,7 @@ mkdir -p $copy_prep
 # relevant one.
 remote_parcel=$(remote_exec "ls $target_dir | head -n 1")
 remote_platform=`echo $remote_parcel | sed -re "s/^.*-([a-z0-9]+).parcel/\1/"`
-echo "Remote parcel $remote_parcel with remote platform $remote_platform"
+echo "Remote parcel '$remote_parcel' with remote platform '$remote_platform'"
 if [[ -n $remote_platform ]]; then
   cp $parcel_repo/*-$remote_platform.parcel $copy_prep
 else
@@ -147,8 +148,8 @@ for filepath in $copy_prep/*.parcel; do
 done
 
 # Getting product and version name as that will be required for CM APIs
-product=`ls $parcel_repo/*-el6.parcel | sed -re "s/^.*\/(.*)-el6.parcel/\1/" | cut -f1 -d-`
-version=`ls $parcel_repo/*-el6.parcel | sed -re "s/^.*\/(.*)-el6.parcel/\1/" | cut -f2,3,4 -d-`
+product=`ls $parcel_repo/*-el6.parcel | head -n 1 | sed -re "s/^.*\/(.*)-el6.parcel/\1/" | cut -f1 -d-`
+version=`ls $parcel_repo/*-el6.parcel | head -n 1 | sed -re "s/^.*\/(.*)-el6.parcel/\1/" | cut -f2,3,4 -d-`
 echo "Detected product '$product' on version '$version'"
 
 # Execute

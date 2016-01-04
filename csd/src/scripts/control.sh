@@ -97,6 +97,15 @@ if [[ -f "$CONF_DIR/sqoop2_beta.keytab" ]]; then
   echo "org.apache.sqoop.security.authentication.kerberos.http.keytab=$CONF_DIR/sqoop2_beta.keytab" >> $CONF_FILE
 fi
 
+# The parcel exports variable SQOOP2_DEFAULT_CONNECTOR_BLACKLIST containing default list of blacklisted connectors
+# If user did not explicitly specify their own blacklist in safety valve, we will go ahead and use it.
+if grep -q "org.apache.sqoop.connector.blacklist" $CONF_FILE; then
+  echo "Found existing blacklist configuration, skipping parcel default."
+else
+  echo "Using parcel's default connector blacklist: $SQOOP2_DEFAULT_CONNECTOR_BLACKLIST"
+  echo "org.apache.sqoop.connector.blacklist=$SQOOP2_DEFAULT_CONNECTOR_BLACKLIST" >> $CONF_FILE
+fi
+
 # Execute required action(s)
 case $COMMAND in
   upgrade)
