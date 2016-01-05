@@ -22,7 +22,8 @@
 
   "runAs" : {
     "user" : "sqoop2",
-    "group" : "sqoop2"
+    "group" : "sqoop2",
+    "principal" : "sqoop2_beta_principal"
   },
 
   "icon" : "images/sqoop2.png",

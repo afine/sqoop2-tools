@@ -110,7 +110,7 @@ fi
 case $COMMAND in
   upgrade)
     echo "Starting Sqoop 2 upgrade tool"
-    # exec $SQOOP2_PARCEL_DIRNAME/bin/sqoop.sh tool upgrade
+    exec $SQOOP2_PARCEL_DIRNAME/bin/sqoop.sh tool upgrade
     ;;
   server)
     export JAVA_OPTS="-Dlog4j.configuration=file:$SQOOP_CONF_DIR/log4j.properties -Dlog4j.debug"
