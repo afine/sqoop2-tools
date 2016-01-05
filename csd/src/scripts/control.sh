@@ -113,7 +113,7 @@ case $COMMAND in
     exec $SQOOP2_PARCEL_DIRNAME/bin/sqoop.sh tool upgrade
     ;;
   server)
-    export JAVA_OPTS="-Dlog4j.configuration=file:$SQOOP_CONF_DIR/log4j.properties -Dlog4j.debug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
+    export JAVA_OPTS="-Dlog4j.configuration=file:$SQOOP_CONF_DIR/log4j.properties -Dlog4j.debug"
     echo "Starting Sqoop 2 from: $SQOOP2_PARCEL_DIRNAME"
     exec $SQOOP2_PARCEL_DIRNAME/bin/sqoop.sh server run
     ;;
