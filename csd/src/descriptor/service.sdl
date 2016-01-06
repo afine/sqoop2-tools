@@ -22,8 +22,7 @@
 
   "runAs" : {
     "user" : "sqoop2",
-    "group" : "sqoop2",
-    "principal" : "sqoop2_beta_principal"
+    "group" : "sqoop2"
   },
 
   "icon" : "images/sqoop2.png",
@@ -198,7 +197,7 @@
 
     "kerberosPrincipals" : [
       {
-        "name" : "sqoop2_beta_principal",
+        "name" : "sqoop_principal",
         "primary" : "sqoop2",
         "instance" : "${host}"
       },
@@ -236,7 +235,7 @@
           ],
           "kerberosPrincipals" : [
             {
-              "principalName" : "sqoop2_beta_principal",
+              "principalName" : "sqoop_principal",
               "propertyName" : "org.apache.sqoop.security.authentication.kerberos.principal"
             },
             {
