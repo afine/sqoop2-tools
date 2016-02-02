@@ -27,7 +27,7 @@ pwd=`pwd`
 # 1) Enable to specify databases and do some workaround for thme (like create DB, ...)
 
 # Argument parsing
-while getopts "u:w:h:c:n:s:y:" optname ; do
+while getopts "u:w:h:c:n:s:y:i:" optname ; do
   case "$optname" in
     "u")
       username=$OPTARG
@@ -50,6 +50,9 @@ while getopts "u:w:h:c:n:s:y:" optname ; do
     "y")
       service_yarn=$OPTARG
       ;;
+    "i")
+      identity_file=$OPTARG
+      ;;
     "?")
       echo "Unknown option $OPTARG"
       exit 1
@@ -68,6 +71,11 @@ if [[ -z $host ]]; then
   exit 1
 fi
 
+if [[ -z $identity_file ]]; then
+  echo "Missing argument -i with ssh identity file"
+  exit 1
+fi
+
 if [[ -z $service_host ]]; then
   service_host=$host
 fi
@@ -83,13 +91,13 @@ echo "Service host: $service_host"
 # Execute $1 on remote server
 function remote_exec() {
   echo "Executing command: $1"
-  sshpass -p $password ssh -oUserKnownHostsFile=/dev/null -o 'StrictHostKeyChecking no' ${username}@${host} $1
+  ssh -i ${identity_file} -oUserKnownHostsFile=/dev/null -o 'StrictHostKeyChecking no' ${username}@${host} $1
 }
 
 # Copy $1 to $2 on remote server (e.g. upload)
 function remote_copy() {
   echo "Executing command: scp $1 ${username}@${host}:$2"
-  sshpass -p $password scp  -oUserKnownHostsFile=/dev/null -o 'StrictHostKeyChecking no' $1 ${username}@${host}:$2
+  scp  -i ${identity_file} -oUserKnownHostsFile=/dev/null -o 'StrictHostKeyChecking no' $1 ${username}@${host}:$2
 }
 
 # Execute givem CM REST API call

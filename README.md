@@ -12,8 +12,6 @@ These are some additional tools that need to be installed to run these scripts
 under OS X 10.11.
 ### sha1sum
 `brew install md5sha1sum`
-### sshpass
-`brew install http://git.io/sshpass.rb`
 ### sed (the gnu version)
 `brew install gnu-sed --with-default-names`
 
@@ -30,9 +28,9 @@ The general flow is as follows:
 ```bash
 # Building parcels for upstream bits
 ./parcel.sh -r https://github.com/apache/sqoop.git -b sqoop2
-./deploy-parcels.sh -h cool.sever.somewhere.org
-./deploy-csd.sh -h cool.sever.somewhere.org
-./deploy-service.sh -h cool.sever.somewhere.org
+./deploy-parcels.sh -i id_rsa -h cool.sever.somewhere.org
+./deploy-csd.sh -i id_rsa -h cool.sever.somewhere.org
+./deploy-service.sh -i id_rsa -h cool.sever.somewhere.org
 ```
 
 You still need to CM to deploy the Sqoop 2 service on the cluster as this step hasn't been automated yet.
