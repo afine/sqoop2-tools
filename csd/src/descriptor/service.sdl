@@ -172,7 +172,7 @@
       "runMode" : "single"
     }
   ],
-   "gateway" : {
+  "gateway" : {
     "alternatives" : {
       "name" : "sqoop2-conf",
       "linkRoot" : "/etc/sqoop2",
@@ -191,7 +191,6 @@
       ]
     }
    },
-
   "roles" : [
   {
     "name" : "SQOOP2_SERVER",
