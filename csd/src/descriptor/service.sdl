@@ -172,7 +172,25 @@
       "runMode" : "single"
     }
   ],
-
+  "gateway" : {
+    "alternatives" : {
+      "name" : "sqoop2-conf",
+      "linkRoot" : "/etc/sqoop2",
+      "priority" : 50
+    },
+    "scriptRunner" : {
+      "program" : "scripts/rcgen.sh"
+    },
+    "configWriter" : {
+      "peerConfigGenerators" : [
+        {
+          "filename" : "sqoop2-conf/sqoop2-serverlist.properties",
+          "params" : ["org.apache.sqoop.jetty.port"],
+          "roleName" : "SQOOP2_SERVER"
+        }
+      ]
+    }
+   },
   "roles" : [
   {
     "name" : "SQOOP2_SERVER",
@@ -219,7 +237,7 @@
     "configWriter" : {
       "generators" : [
         {
-          "filename" : "sqoop.properties",
+          "filename" : "sqoop2-conf/sqoop.properties",
           "configFormat" : "properties",
           "includedParams" : [
             "org.apache.sqoop.jetty.port",
