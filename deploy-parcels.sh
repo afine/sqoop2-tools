@@ -13,10 +13,6 @@
 
 # Deploy parcels to CM
 
-# We require sshpass utility here
-# On Mac you can install it with:
-# brew install http://git.io/sshpass.rb
-
 # Working properties
 parcel_repo='target/parcel_repo'
 target_dir='/opt/cloudera/parcel-repo'
@@ -28,7 +24,7 @@ cm_login="admin:admin"
 pwd=`pwd`
 
 # Argument parsing
-while getopts "p:t:u:w:h:c:" optname ; do
+while getopts "p:t:u:w:h:c:i:" optname ; do
   case "$optname" in
     "p")
       parcel_repo=$OPTARG
@@ -48,6 +44,9 @@ while getopts "p:t:u:w:h:c:" optname ; do
     "h")
       cm_login=$OPTARG
       ;;
+    "i")
+      identity_file=$OPTARG
+      ;;
     "?")
       echo "Unknown option $OPTARG"
       exit 1
@@ -63,6 +62,11 @@ done
 # Parameter checking
 if [[ -z $host ]]; then
   echo "Missing argument -h with CM host"
+  exit 1
+fi
+
+if [[ -z $identity_file ]]; then
+  echo "Missing argument -i with ssh identity file"
   exit 1
 fi
 
@@ -83,12 +87,12 @@ fi
 # Execute $1 on remote server
 function remote_exec() {
   echo "Executing command: $1" >&2
-  sshpass -p $password ssh -v -oUserKnownHostsFile=/dev/null  -o 'StrictHostKeyChecking no' ${username}@${host} $1
+  ssh -v -i ${identity_file} -oUserKnownHostsFile=/dev/null  -o 'StrictHostKeyChecking no' ${username}@${host} $1
 }
 
 # Copy $1 to $2 on remote server (e.g. upload)
 function remote_copy() {
-  sshpass -p $password scp -v -oUserKnownHostsFile=/dev/null  -o 'StrictHostKeyChecking no' $1 ${username}@${host}:$2
+  scp -v -i ${identity_file} -oUserKnownHostsFile=/dev/null  -o 'StrictHostKeyChecking no' $1 ${username}@${host}:$2
 }
 
 # Execute givem CM REST API call
