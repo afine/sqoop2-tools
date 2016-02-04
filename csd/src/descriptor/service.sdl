@@ -237,7 +237,7 @@
     "configWriter" : {
       "generators" : [
         {
-          "filename" : "sqoop2-conf/sqoop.properties",
+          "filename" : "sqoop.properties",
           "configFormat" : "properties",
           "includedParams" : [
             "org.apache.sqoop.jetty.port",
