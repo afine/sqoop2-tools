@@ -75,6 +75,7 @@ git checkout $branch
 git pull
 
 # Build binary archive of the project
+export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=1024m"
 mvn clean package -Pbinary -DskipTests
 
 # Get to original location
