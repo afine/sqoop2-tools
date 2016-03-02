@@ -117,6 +117,7 @@ for distro in el5 el6 el7 precise sles11 trusty wheezy; do
   # Creating target parcel archive
   cd $workdir
   tar -cvzf SQOOP2_BETA-$version-$distro.parcel SQOOP2_BETA-$version
+  sha1sum SQOOP2_BETA-$version-$distro.parcel | cut -f1 -d' ' > SQOOP2_BETA-$version-$distro.parcel.sha
   cd $pwd
 done
 
@@ -125,6 +126,7 @@ parcel_repo=$workdir/parcel_repo
 rm -rf $parcel_repo
 mkdir -p $parcel_repo
 mv $workdir/*parcel $parcel_repo
+mv $workdir/*parcel.sha $parcel_repo
 manifest=$parcel_repo/manifest.json
 
 echo "Generating parcel repository in: $parcel_repo"
