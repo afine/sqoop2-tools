@@ -99,7 +99,6 @@ fi
 
 # SSL/TLS configuration
 echo "org.apache.sqoop.security.tls.enabled=$SSL_ENABLED" >> $CONF_FILE
-echo "org.apache.sqoop.security.tls.keystore=$SSL_SERVER_KEYSTORE_LOCATION" >> $CONF_FILE
 echo "org.apache.sqoop.security.tls.protocol=$TLS_PROTOCOL" >> $CONF_FILE
 
 # The parcel exports variable SQOOP2_DEFAULT_CONNECTOR_BLACKLIST containing default list of blacklisted connectors

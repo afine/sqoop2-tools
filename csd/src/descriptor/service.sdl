@@ -163,6 +163,15 @@
       "configurableInWizard" : true
     },
     {
+      "name" : "ssl_client_truststore_location",
+      "label" : "SSL/TLS Truststore Location on Gateways",
+      "description" : "The location of the truststore file on gateway machines",
+      "required" : "false",
+      "type" : "string",
+      "default" : "",
+      "configurableInWizard" : true
+    },
+    {
       "name" : "cm.sqoop.classpath.extra",
       "label" : "Extra classpath",
       "description" : "All jars from this directory will be added to Sqoop 2 server classpath.",
@@ -188,13 +197,10 @@
       "priority" : 50
     },
     "scriptRunner" : {
-      "program" : "scripts/rcgen.sh"
-    },
-    "sslClient" : {
-      "truststoreLocationConfigName" : "org.apache.sqoop.security.tls.truststore.location",
-      "truststorePasswordConfigName" : "org.apache.sqoop.security.tls.truststore.password.script",
-      "truststorePasswordCredentialProviderCompatible" : false,
-      "truststorePasswordScriptBased" : true
+      "program" : "scripts/rcgen.sh",
+      "environmentVariables" : {
+        "SSL_CLIENT_TRUSTSTORE_LOCATION" : "${ssl_client_truststore_location}"
+      }
     },
     "configWriter" : {
       "peerConfigGenerators" : [
@@ -221,15 +227,12 @@
         "CM_SQOOP_DATABASE_HOSTNAME" : "${cm.sqoop.database.hostname}",
         "AUTHENTICATION_TYPE" : "${org.apache.sqoop.security.authentication.type}",
         "TLS_PROTOCOL" : "${org.apache.sqoop.security.tls.protocol}",
-        "SSL_ENABLED" : "${ssl_enabled}",
-        "SSL_SERVER_KEYSTORE_LOCATION" : "${ssl_server_keystore_location}",
-        "SSL_SERVER_KEYSTORE_PASSWORD" : "${ssl_server_keystore_password}",
-        "SSL_SERVER_KEYSTORE_KEYPASSWORD" : "${ssl_server_keystore_keypassword}"
+        "SSL_ENABLED" : "${ssl_enabled}"
       }
     },
 
     "topology" : {
-      "minInstances" : "1",
+    "minInstances" : "1",
       "maxInstances" : "1"
     },
 
@@ -249,6 +252,7 @@
     "sslServer" : {
       "keyIdentifier" : "sqoop2_server_keystore",
       "keyPasswordOptionality" : "optional",
+      "keystoreLocationConfigName" : "org.apache.sqoop.security.tls.keystore",
       "keystorePasswordConfigName" : "org.apache.sqoop.security.tls.keystore_password_generator",
       "keystorePasswordCredentialProviderCompatible" : false,
       "keystorePasswordScriptBased" : true,
