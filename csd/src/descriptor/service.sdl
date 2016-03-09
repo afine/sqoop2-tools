@@ -232,7 +232,7 @@
     },
 
     "topology" : {
-    "minInstances" : "1",
+      "minInstances" : "1",
       "maxInstances" : "1"
     },
 
