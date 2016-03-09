@@ -154,6 +154,24 @@
       "configurableInWizard" : true
     },
     {
+      "name" : "org.apache.sqoop.security.tls.protocol",
+      "label" : "SSL/TLS Protocol",
+      "description" : "The SSLContext algorithm to use on the server. See https://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html",
+      "required" : "true",
+      "type" : "string",
+      "default" : "TLSv1.2",
+      "configurableInWizard" : true
+    },
+    {
+      "name" : "ssl_client_truststore_location",
+      "label" : "SSL/TLS Truststore Location on Gateways",
+      "description" : "The location of the truststore file on gateway machines",
+      "required" : "false",
+      "type" : "string",
+      "default" : "",
+      "configurableInWizard" : true
+    },
+    {
       "name" : "cm.sqoop.classpath.extra",
       "label" : "Extra classpath",
       "description" : "All jars from this directory will be added to Sqoop 2 server classpath.",
@@ -179,7 +197,10 @@
       "priority" : 50
     },
     "scriptRunner" : {
-      "program" : "scripts/rcgen.sh"
+      "program" : "scripts/rcgen.sh",
+      "environmentVariables" : {
+        "SSL_CLIENT_TRUSTSTORE_LOCATION" : "${ssl_client_truststore_location}"
+      }
     },
     "configWriter" : {
       "peerConfigGenerators" : [
@@ -204,7 +225,9 @@
         "SQOOP_SERVER_EXTRA_LIB" : "${cm.sqoop.classpath.extra}",
         "CM_SQOOP_DATABASE_TYPE" : "${cm.sqoop.database.type}",
         "CM_SQOOP_DATABASE_HOSTNAME" : "${cm.sqoop.database.hostname}",
-        "AUTHENTICATION_TYPE" : "${org.apache.sqoop.security.authentication.type}"
+        "AUTHENTICATION_TYPE" : "${org.apache.sqoop.security.authentication.type}",
+        "TLS_PROTOCOL" : "${org.apache.sqoop.security.tls.protocol}",
+        "SSL_ENABLED" : "${ssl_enabled}"
       }
     },
 
@@ -225,6 +248,18 @@
         "instance" : "${host}"
       }
     ],
+
+    "sslServer" : {
+      "keyIdentifier" : "sqoop2_server_keystore",
+      "keyPasswordOptionality" : "optional",
+      "keystoreLocationConfigName" : "org.apache.sqoop.security.tls.keystore",
+      "keystorePasswordConfigName" : "org.apache.sqoop.security.tls.keystore_password_generator",
+      "keystorePasswordCredentialProviderCompatible" : false,
+      "keystorePasswordScriptBased" : true,
+      "keyPasswordOptionality" : "required",
+      "keystoreKeyPasswordConfigName" : "org.apache.sqoop.security.tls.keymanager_password_generator",
+      "keystoreKeyPasswordScriptBased" : true
+    },
 
     "logging" : {
       "dir" : "/var/log/sqoop2",
@@ -249,7 +284,10 @@
             "org.apache.sqoop.execution.engine",
             "org.apache.sqoop.repository.jdbc.transaction.isolation",
             "org.apache.sqoop.repository.jdbc.maximum.connections",
-            "org.apache.sqoop.security.authentication.type"
+            "org.apache.sqoop.security.authentication.type",
+            "ssl_server_keystore_location",
+            "ssl_server_keystore_password",
+            "ssl_server_keystore_keypassword"
           ],
           "kerberosPrincipals" : [
             {

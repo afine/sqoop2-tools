@@ -15,5 +15,9 @@
 
 # for debugging
 set -x
+if [ -n "$SSL_CLIENT_TRUSTSTORE_LOCATION" ]; then
+    export TLS="--tls"
+    echo "set truststore --truststore $SSL_CLIENT_TRUSTSTORE_LOCATION" >> sqoop2rc
+fi
 
-head -n1 sqoop2-serverlist.properties | awk -F:org.apache.sqoop.jetty.port= '{print "set server --host "$1" --port "$2}' > sqoop2rc
+head -n1 sqoop2-serverlist.properties | awk -F:org.apache.sqoop.jetty.port= '{print "set server --host "$1" --port "$2""}' | xargs -Icmd echo cmd $TLS >> sqoop2rc
