@@ -61,8 +61,7 @@ echo "CM Login: $cm_login"
 
 function cm_api() {
   echo "Calling CM API $1: $2"
-  #curl -sS -X $1 -u $cm_login -i "http://${host}:7180/api/v10/$2" -H "content-type:application/json" -d "$3" 2>&1
-  curl -sS -X $1 -u $cm_login -i "http://${host}:7180/api/v10/$2" 2>&1
+  curl -sS -X $1 -u $cm_login -i "http://${host}:7180/api/v10/$2" -H "content-type:application/json" -d "$3" 2>&1
 }
 
 function cm_get() {
@@ -108,7 +107,7 @@ if [[ $(cm_get clusters/$url_cluster/services/$service_name | grep "\"name\" : \
 fi
 
 
-versions=( $(cm_get clusters/$url_cluster/parcels | grep -A1 "SQOOP2_BETA" | grep version | cut -c 18-44) )
+versions=( $(cm_get clusters/$url_cluster/parcels | grep -A1 "SQOOP2_BETA" | grep version | cut -c 18- | rev | cut -c 3- | rev) )
 
 for version in "${versions[@]}"
 do
