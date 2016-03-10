@@ -11,23 +11,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Deploy Service to Hadoop cluster
-
 # Working properties
 host=''
 username='root'
 password='cloudera'
 cm_login="admin:admin"
 service_name="sqoop2_beta"
-service_host=''
-service_yarn=''
+
 pwd=`pwd`
 
-# TODO:
-# 1) Enable to specify databases and do some workaround for thme (like create DB, ...)
-
 # Argument parsing
-while getopts "u:w:h:c:n:s:y:i:" optname ; do
+while getopts "p:t:u:w:h:c:i:" optname ; do
   case "$optname" in
     "u")
       username=$OPTARG
@@ -38,20 +32,8 @@ while getopts "u:w:h:c:n:s:y:i:" optname ; do
     "h")
       host=$OPTARG
       ;;
-    "c")
+    "h")
       cm_login=$OPTARG
-      ;;
-    "n")
-      service_name=$OPTARG
-      ;;
-    "s")
-      service_host=$OPTARG
-      ;;
-    "y")
-      service_yarn=$OPTARG
-      ;;
-    "i")
-      identity_file=$OPTARG
       ;;
     "?")
       echo "Unknown option $OPTARG"
@@ -71,51 +53,24 @@ if [[ -z $host ]]; then
   exit 1
 fi
 
-if [[ -z $identity_file ]]; then
-  echo "Missing argument -i with ssh identity file"
-  exit 1
-fi
-
-if [[ -z $service_host ]]; then
-  service_host=$host
-fi
-
 # Work itself
 echo "Host: $host"
 echo "Username: $username"
 echo "Password: $password"
 echo "CM Login: $cm_login"
-echo "Service name: $service_name"
-echo "Service host: $service_host"
 
-# Execute $1 on remote server
-function remote_exec() {
-  echo "Executing command: $1"
-  ssh -i ${identity_file} -oUserKnownHostsFile=/dev/null -o 'StrictHostKeyChecking no' ${username}@${host} $1
-}
-
-# Copy $1 to $2 on remote server (e.g. upload)
-function remote_copy() {
-  echo "Executing command: scp $1 ${username}@${host}:$2"
-  scp  -i ${identity_file} -oUserKnownHostsFile=/dev/null -o 'StrictHostKeyChecking no' $1 ${username}@${host}:$2
-}
-
-# Execute givem CM REST API call
 function cm_api() {
   echo "Calling CM API $1: $2"
-  curl -sS -X $1 -u $cm_login -i "http://${host}:7180/api/v10/$2" -H "content-type:application/json" -d "$3" 2>&1
+  #curl -sS -X $1 -u $cm_login -i "http://${host}:7180/api/v10/$2" -H "content-type:application/json" -d "$3" 2>&1
+  curl -sS -X $1 -u $cm_login -i "http://${host}:7180/api/v10/$2" 2>&1
 }
+
 function cm_get() {
   cm_api "GET" "$1"
 }
-function cm_put() {
-  cm_api "PUT" "$1" "$2"
-}
+
 function cm_post() {
   cm_api "POST" "$1" "$2"
-}
-function cm_delete() {
-  cm_api "DELETE" "$1"
 }
 
 # Wait until parcel will get to given state
@@ -152,26 +107,14 @@ if [[ $(cm_get clusters/$url_cluster/services/$service_name | grep "\"name\" : \
   cm_delete clusters/$url_cluster/services/$service_name
 fi
 
-# If YARN dependency haven't been specified we will identify it on our own
-if [[ -z $service_yarn ]]; then
-  service_yarn=$(cm_get clusters/$url_cluster/services | grep '"type" : "YARN"' -B 2 | grep "name" | sed -re "s/^.* \"name\" : \"([-A-Z0-9]+)\".*\$/\1/")
-  echo "Identified running YARN instance: $service_yarn"
-else
-  echo "Using specified YARN dependency: $service_yarn"
-fi
 
-# Create service
-echo "Creating service $service_name"
-cm_post clusters/$url_cluster/services "{ \"items\" : [{\"name\" : \"$service_name\", \"type\" : \"SQOOP2_BETA\"}] }"
+versions=( $(cm_get clusters/$url_cluster/parcels | grep -A1 "SQOOP2_BETA" | grep version | cut -c 18-44) )
 
-echo "Creating role for Sqoop 2 server"
-cm_post clusters/$url_cluster/services/$service_name/roles "{ \"items\" : [{\"type\" : \"SQOOP2_SERVER\", \"hostRef\" : {\"hostId\" : \"$service_host\"}} ] }"
+for version in "${versions[@]}"
+do
+  cm_post clusters/$url_cluster/parcels/products/SQOOP2_BETA/versions/$version/commands/deactivate {}
 
-echo "Configuring the new role"
-cm_put clusters/$url_cluster/services/$service_name/config "{ \"items\" : [{ \"name\" : \"yarn_service\", \"value\" : \"$service_yarn\" }] }"
+  cm_post clusters/$url_cluster/parcels/products/SQOOP2_BETA/versions/$version/commands/startRemovalOfDistribution {}
 
-echo "Starting the new service"
-cm_post clusters/$url_cluster/services/$service_name/commands/firstRun ""
-
-echo "Waiting on the service to start up"
-cm_wait_for_service clusters/$url_cluster/services/$service_name STARTED
+  cm_post clusters/$url_cluster/parcels/products/SQOOP2_BETA/versions/$version/commands/removeDownload {}
+done
