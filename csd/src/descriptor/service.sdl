@@ -177,6 +177,80 @@
       "description" : "All jars from this directory will be added to Sqoop 2 server classpath.",
       "type" : "string",
       "default": "/var/lib/sqoop2/"
+    },
+    {
+      "name" : "org.apache.sqoop.security.repo_encryption.enabled",
+      "label" : "Repository Encryption Enabled",
+      "description" : "Enable encryption of sensitive inputs in the repository",
+      "type" : "boolean",
+      "default": "false",
+      "configurableInWizard" : true
+    },
+    {
+      "name" : "cm.sqoop.repo_encryption.password",
+      "label" : "Repository Encryption Password",
+      "description" : "Password to be used for key generation",
+      "type" : "password",
+      "alternateScriptParameterName": "org.apache.sqoop.security.repo_encryption.password_generator",
+      "configurableInWizard" : true
+    },
+    {
+      "name" : "org.apache.sqoop.security.repo_encryption.hmac_algorithm",
+      "label" : "HMAC Algorithm",
+      "description" : "The HMAC algorithm. We can store digests with up to 1024 bits.",
+      "type" : "string",
+      "default": "HmacSHA256",
+      "configurableInWizard" : true
+    },
+    {
+      "name" : "org.apache.sqoop.security.repo_encryption.cipher_algorithm",
+      "label" : "Cipher Algorithm",
+      "description" : "The cipher algorithm",
+      "type" : "string",
+      "default": "AES",
+      "configurableInWizard" : true
+    },
+    {
+      "name" : "org.apache.sqoop.security.repo_encryption.cipher_key_size",
+      "label" : "The key size for the cipher in bytes. We can store up to 1024 bit keys.",
+      "description" : "Bytes for cipher key",
+      "type" : "long",
+      "default": 16,
+      "unit" : "bytes",
+      "configurableInWizard" : true
+    },
+    {
+      "name" : "org.apache.sqoop.security.repo_encryption.cipher_spec",
+      "label" : "Cipher Transformation",
+      "description" : "The cipher transformation.",
+      "type" : "string",
+      "default": "AES/CBC/PKCS5Padding",
+      "configurableInWizard" : true
+    },
+    {
+      "name" : "org.apache.sqoop.security.repo_encryption.initialization_vector_size",
+      "label" : "Initialization Vector Size",
+      "description" : "The size of the initialization vector to use in bytes. We support up to 1024 bit initialization vectors.",
+      "type" : "long",
+      "unit" : "bytes",
+      "default": 16,
+      "configurableInWizard" : true
+    },
+    {
+      "name" : "org.apache.sqoop.security.repo_encryption.pbkdf2_algorithm",
+      "label" : "Password Based Key Generation Algorithm",
+      "description" : "The algorithm for secret key generation",
+      "type" : "string",
+      "default": "PBKDF2WithHmacSHA1",
+      "configurableInWizard" : true
+    },
+    {
+      "name" : "org.apache.sqoop.security.repo_encryption.pbkdf2_rounds",
+      "label" : "Rounds/Iterations of the Password Based Key Generation Algorithm",
+      "description" : "The number of rounds/iterations for the generation of a key from a password.",
+      "type" : "long",
+      "default": 4000,
+      "configurableInWizard" : true
     }
   ],
 
@@ -187,6 +261,14 @@
       "description" : "Will initialize or upgrade Sqoop 2 repository metadata (structures and data).",
       "roleName" : "SQOOP2_SERVER",
       "roleCommand" : "repository_upgrade",
+      "runMode" : "single"
+    },
+    {
+      "name" : "repository_key_rotation",
+      "label" : "Rotate repository encryption key",
+      "description" : "Will generate a new encryption key for sensitive inputs using the provided encryption configuration",
+      "roleName" : "SQOOP2_SERVER",
+      "roleCommand" : "repository_key_rotation",
       "runMode" : "single"
     }
   ],
@@ -285,6 +367,15 @@
             "org.apache.sqoop.repository.jdbc.transaction.isolation",
             "org.apache.sqoop.repository.jdbc.maximum.connections",
             "org.apache.sqoop.security.authentication.type",
+            "org.apache.sqoop.security.repo_encryption.enabled",
+            "org.apache.sqoop.security.repo_encryption.password_generator",
+            "org.apache.sqoop.security.repo_encryption.hmac_algorithm",
+            "org.apache.sqoop.security.repo_encryption.cipher_algorithm",
+            "org.apache.sqoop.security.repo_encryption.cipher_key_size",
+            "org.apache.sqoop.security.repo_encryption.cipher_spec",
+            "org.apache.sqoop.security.repo_encryption.initialization_vector_size",
+            "org.apache.sqoop.security.repo_encryption.pbkdf2_algorithm",
+            "org.apache.sqoop.security.repo_encryption.pbkdf2_rounds",
             "ssl_server_keystore_location",
             "ssl_server_keystore_password",
             "ssl_server_keystore_keypassword"
@@ -318,6 +409,27 @@
             "CM_SQOOP_DATABASE_TYPE" : "${cm.sqoop.database.type}",
             "CM_SQOOP_DATABASE_HOSTNAME" : "${cm.sqoop.database.hostname}",
             "AUTHENTICATION_TYPE" : "${org.apache.sqoop.security.authentication.type}"
+          }
+        }
+      },
+      {
+        "name": "repository_key_rotation",
+        "label": "Rotate repository encryption key",
+        "description": "Will generate a new encryption key based on the provided repository password",
+        "expectedExitCodes": [
+          0
+        ],
+        "requiredRoleState": "stopped",
+        "commandRunner": {
+          "program": "scripts/control.sh",
+          "args": [
+            "key_rotation"
+          ],
+          "environmentVariables": {
+            "SQOOP_SERVER_EXTRA_LIB": "${cm.sqoop.classpath.extra}",
+            "CM_SQOOP_DATABASE_TYPE": "${cm.sqoop.database.type}",
+            "CM_SQOOP_DATABASE_HOSTNAME": "${cm.sqoop.database.hostname}",
+            "AUTHENTICATION_TYPE": "${org.apache.sqoop.security.authentication.type}"
           }
         }
       }
