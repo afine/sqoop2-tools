@@ -116,6 +116,10 @@ case $COMMAND in
     echo "Starting Sqoop 2 upgrade tool"
     exec $SQOOP2_PARCEL_DIRNAME/bin/sqoop.sh tool upgrade
     ;;
+  key_rotation)
+    echo "Starting Sqoop 2 upgrade tool"
+    exec $SQOOP2_PARCEL_DIRNAME/bin/sqoop.sh tool repositoryencryption -FuseConf -TuseConf
+    ;;
   server)
     export JAVA_OPTS="-Dlog4j.configuration=file:$SQOOP_CONF_DIR/log4j.properties -Dlog4j.debug"
     echo "Starting Sqoop 2 from: $SQOOP2_PARCEL_DIRNAME"
