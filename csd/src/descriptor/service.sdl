@@ -368,7 +368,7 @@
             "org.apache.sqoop.repository.jdbc.maximum.connections",
             "org.apache.sqoop.security.authentication.type",
             "org.apache.sqoop.security.repo_encryption.enabled",
-            "org.apache.sqoop.security.repo_encryption.password_generator",
+            "cm.sqoop.repo_encryption.password",
             "org.apache.sqoop.security.repo_encryption.hmac_algorithm",
             "org.apache.sqoop.security.repo_encryption.cipher_algorithm",
             "org.apache.sqoop.security.repo_encryption.cipher_key_size",
