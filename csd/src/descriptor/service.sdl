@@ -378,7 +378,8 @@
             "org.apache.sqoop.security.repo_encryption.pbkdf2_rounds",
             "ssl_server_keystore_location",
             "ssl_server_keystore_password",
-            "ssl_server_keystore_keypassword"
+            "ssl_server_keystore_keypassword",
+            "org.apache.sqoop.repository.jdbc.password"
           ],
           "kerberosPrincipals" : [
             {
