@@ -72,6 +72,10 @@ function cm_post() {
   cm_api "POST" "$1" "$2"
 }
 
+function cm_delete() {
+  cm_api "DELETE" "$1"
+}
+
 # Wait until parcel will get to given state
 function cm_wait_for_service () {
   api=$1

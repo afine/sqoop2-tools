@@ -132,6 +132,9 @@ echo "Working in local parcel copy directory: $copy_prep"
 rm -rf $copy_prep
 mkdir -p $copy_prep
 
+# Delete the repository on the server
+remote_exec "rm -rf /var/lib/sqoop2/repository/db/"
+
 # By default we will copy parcels for all platforms to the target server. However
 # if we're able to get platform of the remote box, then we'll simply copy only the
 # relevant one.
