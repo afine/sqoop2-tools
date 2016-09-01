@@ -73,8 +73,8 @@
       "configurableInWizard" : true
     },
     {
-      "name" : "org.apache.sqoop.repository.jdbc.password",
-      "label" : "Database Password",
+      "name" : "org.apache.sqoop.repository.jdbc.password_generator",
+      "label" : "Database Password Generator",
       "description" : "Password with database that Sqoop will use for it's repository.",
       "type" : "password",
       "default": "",
@@ -379,7 +379,7 @@
             "ssl_server_keystore_location",
             "ssl_server_keystore_password",
             "ssl_server_keystore_keypassword",
-            "org.apache.sqoop.repository.jdbc.password",
+            "org.apache.sqoop.repository.jdbc.password_generator",
             "org.apache.sqoop.repository.jdbc.user"
           ],
           "kerberosPrincipals" : [
